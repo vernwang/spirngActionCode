@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+  http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	
+	<var name='order' class="pizza.domain.Order"></var>
+
+	<subflow-state id="identifyCustomer" subflow="pizza/customer">
+		<output name="customer" value="order.customer"></input>
+		<transition on="customerReady"  to="buildOrder"></transition>
+	</subflow-state>
+
+	<subflow-state id="buildOrder" subflow="pizza/order">
+		<input name="order" value="order"></input>
+		<transition on="orderCreated" to="takePayment"></transition>
+	</subflow-state>
+	
+	<subflow-state id="takePayment" subflow="pizza/payment">
+		<input name="order" value="order"></input>
+		<trasition on="paymentTaken" to="saveOrder"></trasition>
+	</subflow-state>
+
+	<action-state id="saveOrder" >
+		<evaluate expression="pizzaFlowActions.saveOrder(order)"></evaluate>
+		<transition to="thankCustomer"></transition>
+	</action-state>
+
+	<view-state id="thankCustomer" >
+		<transition to="endState"></transition>
+		<secured attributes="ROLE_ADMIN" match="all"/>
+	</view-state>
+
+	<end-state id="endState"/>
+	
+	<global-transitions>
+		<trasition on="cancel" to="endState"/>
+	</global-transitions>
+	
+
+
+
+
+</web-app>

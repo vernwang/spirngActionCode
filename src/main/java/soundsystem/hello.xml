@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       >
+	   
+	<!-- configuration details go here -->
+	
+	<bean id="trackCounter" class="soundsystem.TrackCounter"/>
+	
+	<bean id="cd" class="soundsystem.BlankDisc">
+		<property name="title" value="hello"/>
+		<property name="tracks">
+			<list>
+				<value>hello</value>
+				<value>hello</value>
+				<value>hello</value>
+				<value>hello</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="cdPlayer" class="soundsystem.CDPlayer">
+	<!-- ref 注入 -->	
+		<!-- 普通方案 -->
+		<constructor-arg ref="compactDisc" />
+		
+		<!-- 使用替代方案c命名空间，构造器注入 --> 
+		<!-- cd代表参数名 -->	
+		<c:cd-ref="compactDisc"/>
+		 <!-- 下划线前缀，数字代表下标  使用于多个参数-->
+		<c:_0-ref="compactDisc"/>
+		<!--  下划线前缀,单个参数  -->
+		<c:_-ref="compactDisc"/>
+		
+		
+	<!-- 字面量注入到构造器中 -->
+		<!-- 普通 按照顺序传入 -->
+		<constructor-arg value="hello man."></constructor-arg>
+		<constructor-arg value="THe"></constructor-arg>
+		
+		<!-- c命名空间 构造器参数名字 -->
+		<c:_title="hello man."/>
+		<c:_artist="THe">
+		
+		<!-- c命名空间 构造器下标 -->
+		<c:_0="hello man."/>
+		<c:_1="THe">
+		
+		<!-- 单个 -->
+		<c:_="THe"></c:_>
+		
+		
+	<!-- 装配集合。只有xml自带。替代方案不可行 -->	
+		<constructor-arg value="hello man."></constructor-arg>
+		<constructor-arg value="THe"></constructor-arg>
+		<constructor-arg >
+			<list>
+				<value>Pke</value>
+				<value>sda</value>
+				<value>da</value>
+			</list>
+		</constructor-arg>
+		
+		<!-- 装配bean列表 -->
+		<constructor-arg>
+			<list>
+				<ref bean="cd"/>
+				<ref bean="cdPlayer"/>
+			</list>
+		</constructor-arg>
+		
+	<!-- 设置属性 -->
+	
+		<property name="compactDisc" ref="compactDisc">
+		
+		<!-- p命名空间 -->
+		<p:compactDisc-ref="compactDisc"/>
+				
+		<!-- 字面量注入 集合不能使用p 命名空间 -->
+		<property name="compactDisc" value="dsda"/>
+		<property name="compactDisc">
+			<list>
+				<value>hello</value>
+				<value>world</value>
+			</list>
+		</property>
+		
+		
+		<property name="compactDisc" ref="trackList">
+		<p:tracks-ref="trackList"></p:tracks-ref>
+		
+	</bean>
+	
+	<util-list id="trackList">
+		<value>wew</value>
+		<value>wewq</value>
+	</util-list>
+	
+	
+	<bean id="cdPlayer" class="soundsystem.CDPlayer">
+		
+		
+		
+	</bean>
+	
+	<bean class="soundsystem.CDPlayerConfig"></bean>
+	<import resource="cdPlay-config.xml"></import>
+	
+	<aop:config>
+		<aop:aspect>
+			<aop:pointcut id="trackPlayed" expression="execution(* concert.playTrack
+				(int) and args(trackNumber))"/>
+				
+			<aop	:before
+				pointcut-ref="trackPlayed" method="countTrack"/>
+		
+		
+		</aop:aspect>
+	
+	</aop:config>
+	
+	
+	
+</beans>

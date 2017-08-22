@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+       >
+	
+	<beans profile="dev">
+		<bean id="dataSource"></bean>
+	</beans>
+	
+	<beans profile="prod">
+		<bean id="dataSource"></bean>
+	</beans>
+	
+	
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>dev</param-value>
+	</context-param>
+	
+	
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispacherServlet</servlet-class>
+		<init-param>
+			<param-name>spring.profiles.default</param-name>
+			<param-value>dev</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
+	<bean id="notepad" class="com.myapp.Notepad" scope="prototype" >
+		<aop:scoped-proxy/>
+	</bean>
+	
+	
+	
+</beans>

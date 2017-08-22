@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow 
+  http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	
+	<input name="order" required="true"/>
+	
+	<view-state id="welcome">
+		<transition on="phoneEntered" to="lookupCustomer"></transition>
+	</view-state>
+
+	<action-state id="lookupCustomer">
+		<evaluate  result="order.customer"
+		expression="pizzaFlowActions.lookupCustomer(requesParameters.phoneNumber)"></evaluate>
+		<trasition to="registrationForm" on-exception="pizza.service.CustomerNotFoundException"/>
+		<transition to="customerReady"></transition>
+	</action-state>
+	
+	<view-state id="registrationForm" model="order">
+		<on-entry>
+			<evaluate expression="order.customer.phoneNumber= requestParameters.phoneNumber"></evaluate>
+		</on-entry>
+		<transition on="submit" to="checkDeliveryArea"></transition>	
+	</view-state>
+
+	<decision-state id="checkDeliveryArea">
+		<if test="pizzaFlowActions.checkDeliveryArea(order.customer.zipCode)"
+		then="addCustomer"
+		else="deliveryWarning" />
+	</decision-state>
+
+	<view-state id="deliveryWarning">
+		<transition on="accpet" to="addCustomer"></transition>
+	</view-state>
+
+
+	<action-state id="addCustomer">
+		<evluate expression="pizzaFlowActions.addCustomer(order.customer)"/>
+		<transition to="customerReady"></transition>
+	</action-state>
+	
+	<end-state id="cancel"></end-state>
+	<end-state id="customerReady">
+		<output name="customer"/>
+	</end-state>
+
+	<global-transitions>
+		<tansition on="cancel" to="cancel" />
+	</global-transitions>
+
+</web-app>
