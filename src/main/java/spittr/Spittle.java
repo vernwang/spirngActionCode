@@ -1,9 +1,10 @@
 package spittr;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-public class Spittle {
+public class Spittle  implements Serializable{
 	private final Long id;
 	  private final String message;
 	  private final Date time;
